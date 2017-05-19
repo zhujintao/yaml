@@ -41,7 +41,10 @@ func (y *yaml) find(key string) error {
 	y.ktbl=make(map[string]int)
 	for i,line:=range y.lines {
 
-		if strings.Contains(line,"#"){continue}
+		//if strings.Contains(line,"#"){continue}
+
+		if len(strings.Split(line,"#")[0]) == 0 {continue}
+
 		if len(strings.Fields(line)) == 0 {continue}
 
 		if len(keys) == 2 {
@@ -88,7 +91,7 @@ func (y *yaml) find(key string) error {
 func (y *yaml) Set(key, value string) error {
 
 	if e:=y.find(key);e!=nil {
-		fmt.Printf(e.Error())
+		//fmt.Printf(e.Error())
 		return e
 
 	}
@@ -119,7 +122,7 @@ func (y *yaml) Save(t ...bool) error {
 func (y *yaml) Add(key, value string) error {
 
 	if e:=y.find(key);e==nil{
-		fmt.Printf(`KEY: "%s" is exist.` + "\n",key)
+		//fmt.Printf(`KEY: "%s" is exist.` + "\n",key)
 		return e
 	}
 	keys:=strings.Split(key,":")
@@ -184,19 +187,19 @@ func (y *yaml) Get(key string) string {
 	keys:=strings.Split(key,":")
 	if len(keys)-1 == 1 {return "" }
 
-	old:=strings.Split(y.lines[y.num],":")
-	w:=len(old[1])-len(strings.Fields(old[1])[0])
+	old:=strings.Split(y.lines[y.num],keys[len(keys)-1]+":")
 
-	value:= string([]rune( strings.Join(old[1:],"") )[w:])
 
-	return value
+	v:=strings.Split(old[1],"#")[0]
+
+	return strings.Fields(v)[0]
 
 }
 
 func (y *yaml) Del(key string) error {
 
 	if e:=y.find(key);e!=nil{
-		fmt.Printf(`KEY: "%s" not found.` + "\n",key)
+		//fmt.Printf(`KEY: "%s" not found.` + "\n",key)
 		return e
 	}
 
@@ -211,6 +214,19 @@ func (y *yaml) Del(key string) error {
 	return nil
 
 }
+
+func (y *yaml) SetA(key,value string) error  {
+
+	if e:=y.Set(key, value); e!=nil {
+
+		return y.Add(key, value)
+
+	}
+
+	return nil
+
+}
+
 
 func (y *yaml) print() {
 	fmt.Printf(strings.Join(y.lines,"\n"))
