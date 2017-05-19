@@ -85,11 +85,11 @@ func (y *yaml) find(key string) error {
 }
 
 
-func (y *yaml) Set(key, value string) {
+func (y *yaml) Set(key, value string) error {
 
 	if e:=y.find(key);e!=nil {
 		fmt.Printf(e.Error())
-		return
+		return e
 
 	}
 
@@ -97,6 +97,8 @@ func (y *yaml) Set(key, value string) {
 	k:=string([]rune(y.lines[y.num])[0:len(old[0])+1])
 
 	y.lines[y.num]= k + " " + value
+
+	return nil
 
 }
 func (y *yaml) Save(t ...bool) error {
@@ -114,11 +116,11 @@ func (y *yaml) Save(t ...bool) error {
 }
 
 
-func (y *yaml) Add(key, value string) {
+func (y *yaml) Add(key, value string) error {
 
 	if e:=y.find(key);e==nil{
 		fmt.Printf(`KEY: "%s" is exist.` + "\n",key)
-		return
+		return e
 	}
 	keys:=strings.Split(key,":")
 
@@ -168,6 +170,7 @@ func (y *yaml) Add(key, value string) {
 		tmplines=append(tmplines,y.lines[y.ktbl[keys[len(keys)-3]]+1:]...)
 		y.lines=tmplines
 	}
+	return nil
 
 }
 
@@ -190,11 +193,11 @@ func (y *yaml) Get(key string) string {
 
 }
 
-func (y *yaml) Del(key string) {
+func (y *yaml) Del(key string) error {
 
 	if e:=y.find(key);e!=nil{
 		fmt.Printf(`KEY: "%s" not found.` + "\n",key)
-		return
+		return e
 	}
 
 	keys:=strings.Split(key,":")
@@ -204,6 +207,8 @@ func (y *yaml) Del(key string) {
 	}
 
 	y.lines[y.num]=""
+
+	return nil
 
 }
 
