@@ -85,7 +85,7 @@ func (y *yaml) find(key string) error {
 }
 
 
-func (y *yaml) Modify(key, value string) {
+func (y *yaml) Set(key, value string) {
 
 	if e:=y.find(key);e!=nil {
 		fmt.Printf(e.Error())
