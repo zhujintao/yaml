@@ -41,27 +41,28 @@ func (y *yaml) find(key string) error {
 	y.ktbl=make(map[string]int)
 	for i,line:=range y.lines {
 
-		//if strings.Contains(line,"#"){continue}
 
 		if len(strings.Split(line,"#")[0]) == 0 {continue}
-
 		if len(strings.Fields(line)) == 0 {continue}
 
 		if len(keys) == 2 {
 
-			if strings.Contains(line, keys[0] + ":") {
 
-				y.num = i
-				y.ktbl[keys[keyindex]]=i
-				continue
+			if y.ktbl[keys[0]] != 0 {
+
+				if !strings.Contains(line," "){
+					y.ktbl["#done"]=i
+					return nil
+				}
 			}
-			if y.num !=-1 {
 
-				y.ktbl["#done"]=i
-
-				if !strings.Contains(line," "){return nil}
-
+			if strings.Contains(line, keys[0] + ":"){
+				y.ktbl[keys[0]]=i
+				y.num=i
 			}
+
+			continue
+
 		}
 
 
@@ -206,10 +207,14 @@ func (y *yaml) Del(key string) error {
 	keys:=strings.Split(key,":")
 
 	if len(keys) == 2 {
-		y.lines=append(y.lines[0:y.ktbl[keys[0]]],y.lines[y.ktbl["#done"]-1:]...)
+
+		y.lines=append(y.lines[0:y.ktbl[keys[0]]], y.lines[y.ktbl["#done"]-1:]...)
 	}
 
-	y.lines[y.num]=""
+
+	y.lines=append(y.lines[0:y.num], y.lines[y.num+1:]...)
+
+	//y.lines[y.num]=""
 
 	return nil
 
